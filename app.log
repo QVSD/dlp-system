@@ -1,0 +1,25 @@
+2025-12-29 19:37:06,370 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-29 19:37:06,371 INFO [33mPress CTRL+C to quit[0m
+2025-12-29 19:37:06,372 INFO  * Restarting with stat
+2025-12-29 19:37:06,545 WARNING  * Debugger is active!
+2025-12-29 19:37:06,547 INFO  * Debugger PIN: 350-521-445
+2025-12-29 19:39:28,012 INFO Profile data returned: {'email': 'test.user@example.com', 'cnp': '1960101223344', 'iban': 'RO49AAAA1B31007593840000'}
+2025-12-29 19:39:28,012 INFO 127.0.0.1 - - [29/Dec/2025 19:39:28] "GET /profile HTTP/1.1" 200 -
+2025-12-29 19:42:02,675 INFO Profile data returned: {'email': 'test.user@example.com', 'cnp': '1960101223344', 'iban': 'RO49AAAA1B31007593840000'}
+2025-12-29 19:42:02,676 INFO 127.0.0.1 - - [29/Dec/2025 19:42:02] "GET /profile HTTP/1.1" 200 -
+2025-12-29 19:43:58,175 INFO Profile data returned: {'email': 'test.user@example.com', 'cnp': '1960101223344', 'iban': 'RO49AAAA1B31007593840000'}
+2025-12-29 19:43:58,176 INFO 127.0.0.1 - - [29/Dec/2025 19:43:58] "GET /profile HTTP/1.1" 200 -
+2025-12-29 20:05:31,346 INFO Login attempt: {'card': '41111111111111111'}
+2025-12-29 20:05:31,346 INFO 127.0.0.1 - - [29/Dec/2025 20:05:31] "POST /login HTTP/1.1" 200 -
+2025-12-29 20:05:55,132 INFO 127.0.0.1 - - [29/Dec/2025 20:05:55] "[31m[1mPOST /login HTTP/1.1[0m" 415 -
+2025-12-29 20:13:21,791 INFO Login attempt: {'card': '4111111111111111'}
+2025-12-29 20:13:21,791 INFO 127.0.0.1 - - [29/Dec/2025 20:13:21] "POST /login HTTP/1.1" 200 -
+2025-12-29 20:14:41,210 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-29 20:14:41,210 INFO [33mPress CTRL+C to quit[0m
+2025-12-29 20:14:41,211 INFO  * Restarting with stat
+2025-12-29 20:14:41,378 WARNING  * Debugger is active!
+2025-12-29 20:14:41,379 INFO  * Debugger PIN: 350-521-445
+2025-12-29 20:15:10,223 INFO Login attempt: {'card': '4111111111111111'}
+2025-12-29 20:15:10,223 INFO 127.0.0.1 - - [29/Dec/2025 20:15:10] "POST /login HTTP/1.1" 200 -
