@@ -7,46 +7,42 @@ from scoring import compute_confidence, decide_action
 from context import extract_context
 from models import Finding
 import os
+from policy import evaluate_policy
+from context import extract_direction
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.join(BASE_DIR, "..", "dlp-project", "demo-app", "app.log")
 
 
 def scan_line(line: str):
-    # print("SCAN LINE:", line.strip())
-
     findings = []
     context = extract_context(line)
+    direction = extract_direction(line)
 
     for dtype, pattern in RULES.items():
-        matches = pattern.findall(line)
-        # print(f"CHECK {dtype} → matches =", matches)
-
         for match in pattern.findall(line):
             value = match if isinstance(match, str) else match[0]
 
             confidence = compute_confidence(dtype, value, line, context)
-            action = decide_action(confidence)
 
-            # print(
-            #     f"FOUND {dtype} | "
-            #     f"confidence={confidence} | "
-            #     f"action={action}"
-            # )
-
-
-            if action == "IGNORE":
-                continue
-
-            findings.append(Finding(
+            finding = Finding(
                 dtype=dtype,
                 value=value,
                 masked_value=mask_value(dtype, value),
-                severity=SEVERITY.get(dtype, "UNKNOWN"),
+                severity=SEVERITY.get(dtype),
                 confidence=confidence,
-                action=action,
-                context=context
-            ))
+                context=context,
+                direction=direction
+            )
+
+            finding.action = evaluate_policy(finding)
+
+            if finding.action == "IGNORE":
+                continue
+
+            findings.append(finding)
+
     return findings
 
 def main():
@@ -74,15 +70,33 @@ def main():
                     for finding in scan_line(line):
                         # print("RAW LINE >>>", repr(line))
 
-                        print(
-                            f"[{datetime.now()}] "
-                            f"DLP {finding.action} | "
-                            f"Type={finding.dtype} | "
-                            f"Severity={finding.severity} | "
-                            f"Confidence={finding.confidence} | "
-                            f"Context={finding.context} | "
-                            f"Value={finding.masked_value}"
-                        )
+                        if finding.action == "BLOCK":
+                            print(
+                                f"[{datetime.now()}] 🚫 BLOCKED | "
+                                f"Type={finding.dtype} | "
+                                f"Context={finding.context} | "
+                                f"Direction={finding.direction} | "
+                                f"Value={finding.masked_value}"
+                            )
+
+                        elif finding.action == "MASK":
+                            print(
+                                f"[{datetime.now()}] 🟡 MASKED | "
+                                f"Type={finding.dtype} | "
+                                f"Context={finding.context} | "
+                                f"Value={finding.masked_value}"
+                            )
+
+                        elif finding.action == "ALERT":
+                            print(
+                                f"[{datetime.now()}] ⚠️ ALERT | "
+                                f"Type={finding.dtype} | "
+                                f"Severity={finding.severity} | "
+                                f"Confidence={finding.confidence} | "
+                                f"Context={finding.context} | "
+                                f"Value={finding.masked_value}"
+                            )
+
                 last_size = f.tell()
 
             time.sleep(1)

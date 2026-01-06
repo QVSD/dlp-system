@@ -9,6 +9,8 @@ class Finding:
     masked_value: str
     severity: str
     confidence: int
-    action: str
     context: str
+    direction: str
+    action: str = None
+
 

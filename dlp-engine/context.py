@@ -25,3 +25,10 @@ def context_score(dtype: str, line: str) -> int:
         if kw in lower:
             score += 10
     return score  # max ~50
+
+def extract_direction(line: str) -> str:
+    if "GET /profile" in line or "endpoint=/profile" in line:
+        return "OUTBOUND"
+    if "POST /login" in line:
+        return "INBOUND"
+    return "UNKNOWN"
