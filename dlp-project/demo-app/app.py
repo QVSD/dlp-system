@@ -13,7 +13,7 @@ logging.basicConfig(
 def login():
     data = request.json
     # BAD PRACTICE (intentional)
-    logging.info(f"Login attempt: {data}")
+    logging.info(f"endpoint=/login payload={data}")
     return jsonify({"status": "ok"})
 
 @app.route("/profile", methods=["GET"])
@@ -23,7 +23,7 @@ def profile():
         "cnp": "1960101223344",
         "iban": "RO49AAAA1B31007593840000"
     }
-    logging.info(f"Profile data returned: {user}")
+    logging.info(f"endpoint=/profile payload={user}")
     return jsonify(user)
 
 if __name__ == "__main__":
