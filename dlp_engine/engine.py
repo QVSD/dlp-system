@@ -8,6 +8,7 @@ from dlp_engine.context import extract_context
 from dlp_engine.alerting import send_alert
 from dlp_engine.models import Finding
 from dlp_engine.policy import MODE
+from dlp_engine.audit import write_audit
 import os
 from dlp_engine.policy import evaluate_policy
 from dlp_engine.context import extract_direction
@@ -39,6 +40,9 @@ def scan_line(line: str):
             )
 
             finding.action = evaluate_policy(finding)
+            
+            if finding.action in ("ALERT", "BLOCK", "MASK"):
+                write_audit(finding, endpoint=None, mode=MODE)
 
             if finding.action == "IGNORE":
                 continue

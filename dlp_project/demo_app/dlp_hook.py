@@ -1,17 +1,19 @@
 from dlp_engine.rules import RULES, SEVERITY
 from dlp_engine.scoring import compute_confidence
-from dlp_engine.policy import evaluate_policy
+from dlp_engine.policy import evaluate_policy, MODE
 from dlp_engine.masking import mask_value
 from dlp_engine.context import extract_context, extract_direction
 from dlp_engine.models import Finding
+from dlp_engine.audit import write_audit
 from dlp_engine.quarantine import quarantine
 
 import json
 
+
 def check_dlp(payload: dict, endpoint: str):
     serialized = json.dumps(payload)
 
-    context = "PROFILE"
+    context = extract_context(endpoint)
     direction = "OUTBOUND"
     modified_payload = payload.copy()
 
@@ -31,13 +33,16 @@ def check_dlp(payload: dict, endpoint: str):
                 direction=direction
             )
 
-            action = evaluate_policy(finding)
+            finding.action = evaluate_policy(finding)
 
-            if action == "BLOCK":
+            if finding.action != "IGNORE":
+                write_audit(finding, endpoint=endpoint, mode=MODE)
+
+            if finding.action == "BLOCK":
                 quarantine(payload)
                 return False, finding, None
 
-            if action == "MASK":
+            if finding.action == "MASK":
                 for k, v in modified_payload.items():
                     if v == value:
                         modified_payload[k] = finding.masked_value
