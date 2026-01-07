@@ -3,20 +3,21 @@ from datetime import datetime
 
 from dlp_engine.rules import RULES, SEVERITY
 from dlp_engine.masking import mask_value
-from dlp_engine.scoring import compute_confidence, decide_action
+from dlp_engine.scoring import compute_confidence
 from dlp_engine.context import extract_context
 from dlp_engine.alerting import send_alert
 from dlp_engine.models import Finding
-from dlp_engine.policy import MODE
 from dlp_engine.audit import write_audit
 from dlp_engine.rbac import is_allowed_to_view, redact_finding_for_role
 import os
-from dlp_engine.policy import evaluate_policy
 from dlp_engine.context import extract_direction
+from dlp_engine.policies.evaluator import evaluate_policy
+from dlp_engine.policies.loader import get_mode
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.join(BASE_DIR, "..", "dlp-project", "demo-app", "app.log")
+MODE = get_mode()
 
 
 def scan_line(line: str):

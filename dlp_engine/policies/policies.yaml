@@ -1,20 +1,27 @@
 mode: ENFORCE   # or MONITOR
 
 policies:
-  - name: block_critical_outbound
+  - name: Block critical outbound
+    priority: 100
     when:
       severity: CRITICAL
       direction: OUTBOUND
     action: BLOCK
 
-  - name: mask_high_outbound
+  - name: Mask high outbound
+    priority: 80
     when:
       severity: HIGH
       direction: OUTBOUND
     action: MASK
 
-  - name: alert_low_confident
+  - name: Alert low confidence
+    priority: 50
     when:
       severity: LOW
       min_confidence: 50
     action: ALERT
+
+  - name: Default ignore
+    priority: 0
+    action: IGNORE
