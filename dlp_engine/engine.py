@@ -7,6 +7,7 @@ from dlp_engine.scoring import compute_confidence, decide_action
 from dlp_engine.context import extract_context
 from dlp_engine.alerting import send_alert
 from dlp_engine.models import Finding
+from dlp_engine.policy import MODE
 import os
 from dlp_engine.policy import evaluate_policy
 from dlp_engine.context import extract_direction
@@ -47,7 +48,7 @@ def scan_line(line: str):
     return findings
 
 def main():
-    print("DLP Engine started...")
+    print(f"DLP Engine started in {MODE} mode")
     # print("LOG_FILE =", LOG_FILE)
     # print("EXISTS =", os.path.exists(LOG_FILE))
 

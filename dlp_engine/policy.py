@@ -5,24 +5,36 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 POLICY_FILE = os.path.join(BASE_DIR, "policies", "policies.yaml")
 
 
+def load_config():
+    with open(POLICY_FILE, "r") as f:
+        return yaml.safe_load(f)
+
 def load_policies():
     with open(POLICY_FILE, "r") as f:
         return yaml.safe_load(f)["policies"]
 
 
-POLICIES = load_policies()
+
+CONFIG = load_config()
+POLICIES = CONFIG["policies"]
+MODE = CONFIG.get("mode", "MONITOR")
 
 
 def evaluate_policy(finding):
     for policy in POLICIES:
-        conditions = policy["when"]
-
-        if not _matches_conditions(finding, conditions):
+        if not _matches_conditions(finding, policy["when"]):
             continue
 
-        return policy["action"]
+        action = policy["action"]
+
+        #  MONITOR : dont block anything / ENFORCE : full exec
+        if MODE == "MONITOR" and action in ("BLOCK", "MASK"):
+            return "ALERT"
+
+        return action
 
     return "IGNORE"
+
 
 
 def _matches_conditions(finding, conditions):

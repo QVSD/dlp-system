@@ -1,3 +1,5 @@
+mode: ENFORCE   # or MONITOR
+
 policies:
   - name: block_critical_outbound
     when:
