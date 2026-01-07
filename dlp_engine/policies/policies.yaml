@@ -1,0 +1,18 @@
+policies:
+  - name: block_critical_outbound
+    when:
+      severity: CRITICAL
+      direction: OUTBOUND
+    action: BLOCK
+
+  - name: mask_high_outbound
+    when:
+      severity: HIGH
+      direction: OUTBOUND
+    action: MASK
+
+  - name: alert_low_confident
+    when:
+      severity: LOW
+      min_confidence: 50
+    action: ALERT
