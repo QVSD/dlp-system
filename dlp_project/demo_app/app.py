@@ -1,5 +1,8 @@
 from flask import Flask, request, jsonify
 import logging
+from flask import abort
+from .dlp_hook import check_dlp
+
 
 app = Flask(__name__)
 
@@ -23,8 +26,17 @@ def profile():
         "cnp": "1960101223344",
         "iban": "RO49AAAA1B31007593840000"
     }
-    logging.info(f"endpoint=/profile payload={user}")
+
+    allowed, finding = check_dlp(user, "/profile")
+
+    if not allowed:
+        abort(
+            403,
+            description=f"DLP BLOCKED: {finding.dtype} detected"
+        )
+
     return jsonify(user)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

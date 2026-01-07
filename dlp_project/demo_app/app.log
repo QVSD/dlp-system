@@ -1,0 +1,60 @@
+2026-01-06 17:40:40,507 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-01-06 17:40:40,507 INFO [33mPress CTRL+C to quit[0m
+2026-01-06 17:40:40,509 INFO  * Restarting with stat
+2026-01-06 17:40:40,729 WARNING  * Debugger is active!
+2026-01-06 17:40:40,730 INFO  * Debugger PIN: 857-642-230
+2026-01-06 17:40:42,892 INFO endpoint=/profile payload={'email': 'test.user@example.com', 'cnp': '1960101223344', 'iban': 'RO49AAAA1B31007593840000'}
+2026-01-06 17:40:42,893 INFO 127.0.0.1 - - [06/Jan/2026 17:40:42] "GET /profile HTTP/1.1" 200 -
+2026-01-06 17:40:48,982 INFO endpoint=/profile payload={'email': 'test.user@example.com', 'cnp': '1960101223344', 'iban': 'RO49AAAA1B31007593840000'}
+2026-01-06 17:40:48,983 INFO 127.0.0.1 - - [06/Jan/2026 17:40:48] "GET /profile HTTP/1.1" 200 -
+2026-01-06 17:40:49,443 INFO endpoint=/profile payload={'email': 'test.user@example.com', 'cnp': '1960101223344', 'iban': 'RO49AAAA1B31007593840000'}
+2026-01-06 17:40:49,443 INFO 127.0.0.1 - - [06/Jan/2026 17:40:49] "GET /profile HTTP/1.1" 200 -
+2026-01-06 17:41:24,842 INFO  * Detected change in 'C:\\Users\\drago\\Documents\\Master\\MSI\\Project\\dlp-project\\demo-app\\app.py', reloading
+2026-01-06 17:41:24,867 INFO  * Restarting with stat
+2026-01-06 17:41:26,674 WARNING  * Debugger is active!
+2026-01-06 17:41:26,676 INFO  * Debugger PIN: 857-642-230
+2026-01-06 17:48:04,504 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-01-06 17:48:04,504 INFO [33mPress CTRL+C to quit[0m
+2026-01-06 17:48:04,506 INFO  * Restarting with stat
+2026-01-06 17:48:04,728 WARNING  * Debugger is active!
+2026-01-06 17:48:04,731 INFO  * Debugger PIN: 857-642-230
+2026-01-06 17:48:11,590 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-01-06 17:48:11,590 INFO [33mPress CTRL+C to quit[0m
+2026-01-06 17:48:11,591 INFO  * Restarting with stat
+2026-01-06 17:48:11,821 WARNING  * Debugger is active!
+2026-01-06 17:48:11,823 INFO  * Debugger PIN: 857-642-230
+2026-01-07 00:33:38,113 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-01-07 00:33:38,114 INFO [33mPress CTRL+C to quit[0m
+2026-01-07 00:33:38,115 INFO  * Restarting with stat
+2026-01-07 00:33:38,397 WARNING  * Debugger is active!
+2026-01-07 00:33:38,400 INFO  * Debugger PIN: 857-642-230
+2026-01-07 00:33:39,231 INFO endpoint=/profile payload={'email': 'test.user@example.com', 'cnp': '1960101223344', 'iban': 'RO49AAAA1B31007593840000'}
+2026-01-07 00:33:39,231 INFO 127.0.0.1 - - [07/Jan/2026 00:33:39] "GET /profile HTTP/1.1" 200 -
+2026-01-07 00:36:53,241 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-01-07 00:36:53,241 INFO [33mPress CTRL+C to quit[0m
+2026-01-07 00:36:53,242 INFO  * Restarting with stat
+2026-01-07 00:36:53,520 WARNING  * Debugger is active!
+2026-01-07 00:36:53,522 INFO  * Debugger PIN: 857-642-230
+2026-01-07 00:36:54,824 INFO endpoint=/profile payload={'email': 'test.user@example.com', 'cnp': '1960101223344', 'iban': 'RO49AAAA1B31007593840000'}
+2026-01-07 00:36:54,825 INFO 127.0.0.1 - - [07/Jan/2026 00:36:54] "GET /profile HTTP/1.1" 200 -
+2026-01-07 00:36:55,415 INFO endpoint=/profile payload={'email': 'test.user@example.com', 'cnp': '1960101223344', 'iban': 'RO49AAAA1B31007593840000'}
+2026-01-07 00:36:55,416 INFO 127.0.0.1 - - [07/Jan/2026 00:36:55] "GET /profile HTTP/1.1" 200 -
+2026-01-07 00:51:17,846 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-01-07 00:51:17,846 INFO [33mPress CTRL+C to quit[0m
+2026-01-07 00:51:17,847 INFO  * Restarting with stat
+2026-01-07 00:51:18,102 WARNING  * Debugger is active!
+2026-01-07 00:51:18,104 INFO  * Debugger PIN: 857-642-230
+2026-01-07 00:52:43,384 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-01-07 00:52:43,384 INFO [33mPress CTRL+C to quit[0m
+2026-01-07 00:52:43,385 INFO  * Restarting with stat
+2026-01-07 00:52:43,656 WARNING  * Debugger is active!
+2026-01-07 00:52:43,659 INFO  * Debugger PIN: 857-642-230
+2026-01-07 00:55:59,177 INFO  * Detected change in 'C:\\Users\\drago\\Documents\\Master\\MSI\\Project\\dlp-project\\demo-app\\app.py', reloading
+2026-01-07 00:55:59,213 INFO  * Restarting with stat

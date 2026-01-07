@@ -1,5 +1,5 @@
-from validators import validate_iban, validate_cnp, luhn_check
-from context import context_score
+from dlp_engine.validators import validate_iban, validate_cnp, luhn_check
+from dlp_engine.context import context_score
 
 POLICY_THRESHOLDS = {
     "IGNORE": 30,
