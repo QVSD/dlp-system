@@ -7,6 +7,7 @@ from dlp_engine.models import Finding
 from dlp_engine.audit import write_audit
 from dlp_engine.quarantine import quarantine
 from dlp_engine.alerting import send_alert
+from dlp_engine.metrics import inc
 
 
 import json
@@ -36,6 +37,11 @@ def check_dlp(payload: dict, endpoint: str):
             )
 
             finding.action = evaluate_policy(finding)
+
+            inc("dlp_events_total")
+            inc("dlp_events_by_type", {"type": finding.dtype})
+            inc("dlp_events_by_action", {"action": finding.action})
+
             if finding.action in ("ALERT", "MASK", "BLOCK"):
                 send_alert(finding, endpoint=endpoint)
 
@@ -43,12 +49,16 @@ def check_dlp(payload: dict, endpoint: str):
                 write_audit(finding, endpoint=endpoint, mode=MODE)
 
             if finding.action == "BLOCK":
+                inc("dlp_blocks_total")
                 quarantine(payload)
                 return False, finding, None
 
             if finding.action == "MASK":
+                inc("dlp_masks_total")
                 for k, v in modified_payload.items():
                     if v == value:
                         modified_payload[k] = finding.masked_value
-
+                        
+            if finding.action == "ALERT":
+                inc("dlp_alerts_total")
     return True, None, modified_payload

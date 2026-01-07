@@ -1,5 +1,7 @@
 import time
 from collections import defaultdict
+from dlp_engine.metrics import inc
+
 
 # key => { last_sent, suppressed }
 _rate_state = defaultdict(lambda: {"last_sent": 0, "suppressed": 0})
@@ -29,4 +31,5 @@ def should_send_alert(finding, endpoint=None):
 
     # in cooldown => suppressing
     state["suppressed"] += 1
+    inc("dlp_events_suppressed_total")
     return False, None

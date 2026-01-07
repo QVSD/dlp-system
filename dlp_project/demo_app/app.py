@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import logging
 from flask import abort
 from .dlp_hook import check_dlp
-
+from dlp_engine.metrics import get_metrics
 
 app = Flask(__name__)
 
@@ -38,6 +38,9 @@ def profile():
     return jsonify(user)
 
 
+@app.route("/metrics", methods=["GET"])
+def metrics():
+    return jsonify(get_metrics())
 
 if __name__ == "__main__":
     app.run(debug=True)
