@@ -4,17 +4,16 @@ from dlp_engine.policy import evaluate_policy
 from dlp_engine.masking import mask_value
 from dlp_engine.context import extract_context, extract_direction
 from dlp_engine.models import Finding
+from dlp_engine.quarantine import quarantine
 
 import json
 
 def check_dlp(payload: dict, endpoint: str):
-    """
-    Rulează DLP înainte de a trimite response-ul
-    """
     serialized = json.dumps(payload)
 
-    context = "PROFILE" if endpoint == "/profile" else "UNKNOWN"
+    context = "PROFILE"
     direction = "OUTBOUND"
+    modified_payload = payload.copy()
 
     for dtype, pattern in RULES.items():
         for match in pattern.findall(serialized):
@@ -32,9 +31,15 @@ def check_dlp(payload: dict, endpoint: str):
                 direction=direction
             )
 
-            finding.action = evaluate_policy(finding)
+            action = evaluate_policy(finding)
 
-            if finding.action == "BLOCK":
-                return False, finding
+            if action == "BLOCK":
+                quarantine(payload)
+                return False, finding, None
 
-    return True, None
+            if action == "MASK":
+                for k, v in modified_payload.items():
+                    if v == value:
+                        modified_payload[k] = finding.masked_value
+
+    return True, None, modified_payload

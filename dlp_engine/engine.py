@@ -5,6 +5,7 @@ from dlp_engine.rules import RULES, SEVERITY
 from dlp_engine.masking import mask_value
 from dlp_engine.scoring import compute_confidence, decide_action
 from dlp_engine.context import extract_context
+from dlp_engine.alerting import send_alert
 from dlp_engine.models import Finding
 import os
 from dlp_engine.policy import evaluate_policy
@@ -88,6 +89,7 @@ def main():
                             )
 
                         elif finding.action == "ALERT":
+                            send_alert(finding)
                             print(
                                 f"[{datetime.now()}] ⚠️ ALERT | "
                                 f"Type={finding.dtype} | "

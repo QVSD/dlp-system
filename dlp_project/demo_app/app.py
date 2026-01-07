@@ -27,15 +27,16 @@ def profile():
         "iban": "RO49AAAA1B31007593840000"
     }
 
-    allowed, finding = check_dlp(user, "/profile")
+    allowed, finding, new_payload = check_dlp(user, "/profile")
 
     if not allowed:
-        abort(
-            403,
-            description=f"DLP BLOCKED: {finding.dtype} detected"
-        )
+        abort(403, description=f"DLP BLOCKED: {finding.dtype}")
+
+    if new_payload:
+        return jsonify(new_payload)
 
     return jsonify(user)
+
 
 
 if __name__ == "__main__":
