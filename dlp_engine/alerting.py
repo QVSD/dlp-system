@@ -1,9 +1,25 @@
 import requests
+from dlp_engine.rate_limit import should_send_alert
 
 SLACK_WEBHOOK = "https://hooks.slack.com/services/XXX/YYY/ZZZ"
 
-def send_alert(finding):
-    message = {
-        "text": f"🚨 DLP ALERT\nType: {finding.dtype}\nSeverity: {finding.severity}\nContext: {finding.context}"
-    }
-    requests.post(SLACK_WEBHOOK, json=message)
+def send_alert(finding, endpoint=None):
+    send, suppressed = should_send_alert(finding, endpoint)
+
+    if not send:
+        return
+
+    msg = (
+        f"! DLP ALERT | "
+        f"Type={finding.dtype} | "
+        f"Severity={finding.severity} | "
+        f"Confidence={finding.confidence}% | "
+        f"Action={finding.action} | "
+        f"Endpoint={endpoint}"
+    )
+
+    if suppressed:
+        msg += f" | suppressed={suppressed}"
+
+    print(msg)
+

@@ -40,7 +40,7 @@ def scan_line(line: str):
             )
 
             finding.action = evaluate_policy(finding)
-            
+
             if finding.action in ("ALERT", "BLOCK", "MASK"):
                 write_audit(finding, endpoint=None, mode=MODE)
 
@@ -94,7 +94,7 @@ def main():
                             )
 
                         elif finding.action == "ALERT":
-                            send_alert(finding)
+                            send_alert(finding, endpoint=None)
                             print(
                                 f"[{datetime.now()}] ⚠️ ALERT | "
                                 f"Type={finding.dtype} | "

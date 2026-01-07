@@ -6,6 +6,8 @@ from dlp_engine.context import extract_context, extract_direction
 from dlp_engine.models import Finding
 from dlp_engine.audit import write_audit
 from dlp_engine.quarantine import quarantine
+from dlp_engine.alerting import send_alert
+
 
 import json
 
@@ -34,6 +36,8 @@ def check_dlp(payload: dict, endpoint: str):
             )
 
             finding.action = evaluate_policy(finding)
+            if finding.action in ("ALERT", "MASK", "BLOCK"):
+                send_alert(finding, endpoint=endpoint)
 
             if finding.action != "IGNORE":
                 write_audit(finding, endpoint=endpoint, mode=MODE)
