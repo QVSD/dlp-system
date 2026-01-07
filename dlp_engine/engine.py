@@ -9,6 +9,7 @@ from dlp_engine.alerting import send_alert
 from dlp_engine.models import Finding
 from dlp_engine.policy import MODE
 from dlp_engine.audit import write_audit
+from dlp_engine.rbac import is_allowed_to_view, redact_finding_for_role
 import os
 from dlp_engine.policy import evaluate_policy
 from dlp_engine.context import extract_direction
@@ -52,7 +53,9 @@ def scan_line(line: str):
     return findings
 
 def main():
-    print(f"DLP Engine started in {MODE} mode")
+    ROLE = os.getenv("DLP_ROLE", "DEFAULT")
+    print(f"DLP Engine started in {MODE} mode (role={ROLE})")
+
     # print("LOG_FILE =", LOG_FILE)
     # print("EXISTS =", os.path.exists(LOG_FILE))
 
@@ -64,7 +67,6 @@ def main():
             current_size = os.path.getsize(LOG_FILE)
             # print("FILE SIZE =", current_size, "LAST SIZE =", last_size)
 
-            # dacă fișierul a fost recreat sau trunchiat
             if current_size < last_size:
                 last_size = 0
 
@@ -74,35 +76,29 @@ def main():
 
                 for line in f:
                     for finding in scan_line(line):
-                        # print("RAW LINE >>>", repr(line))
+                        # RBAC check : allowed to see the event?
+                        if not is_allowed_to_view(finding, ROLE):
+                            continue
+
+                        #  RBAC redaction : what field it sees?
+                        safe = redact_finding_for_role(finding, ROLE)
 
                         if finding.action == "BLOCK":
                             print(
-                                f"[{datetime.now()}] 🚫 BLOCKED | "
-                                f"Type={finding.dtype} | "
-                                f"Context={finding.context} | "
-                                f"Direction={finding.direction} | "
-                                f"Value={finding.masked_value}"
+                                f"[{datetime.now()}] | BLOCKED | {safe}"
                             )
 
                         elif finding.action == "MASK":
                             print(
-                                f"[{datetime.now()}] 🟡 MASKED | "
-                                f"Type={finding.dtype} | "
-                                f"Context={finding.context} | "
-                                f"Value={finding.masked_value}"
+                                f"[{datetime.now()}] <> MASKED | {safe}"
                             )
 
                         elif finding.action == "ALERT":
                             send_alert(finding, endpoint=None)
                             print(
-                                f"[{datetime.now()}] ⚠️ ALERT | "
-                                f"Type={finding.dtype} | "
-                                f"Severity={finding.severity} | "
-                                f"Confidence={finding.confidence} | "
-                                f"Context={finding.context} | "
-                                f"Value={finding.masked_value}"
+                                f"[{datetime.now()}] ! ALERT | {safe}"
                             )
+
 
                 last_size = f.tell()
 

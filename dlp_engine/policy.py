@@ -51,3 +51,7 @@ def _matches_conditions(finding, conditions):
         return False
 
     return True
+
+def set_mode(new_mode: str):
+    global MODE
+    MODE = new_mode
