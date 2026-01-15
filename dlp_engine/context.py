@@ -8,14 +8,17 @@ CONTEXT_KEYWORDS = {
     "HIGH_ENTROPY": ["key", "secret", "token"]
 }
 
-def extract_context(line: str) -> str:
-    if "endpoint=/login" in line:
-        return "LOGIN"
-    if "endpoint=/profile" in line:
+def extract_context(source: str) -> str:
+    if source.startswith("/auth"):
+        return "AUTH"
+    if source.startswith("/login"):
+        return "AUTH"
+    if source.startswith("/profile"):
         return "PROFILE"
-    if "payment" in line.lower():
+    if source.startswith("/payment"):
         return "PAYMENT"
     return "UNKNOWN"
+
 
 def context_score(dtype: str, line: str) -> int:
     keywords = CONTEXT_KEYWORDS.get(dtype, [])
@@ -26,9 +29,10 @@ def context_score(dtype: str, line: str) -> int:
             score += 10
     return score  # max ~50
 
-def extract_direction(line: str) -> str:
-    if "GET /profile" in line or "endpoint=/profile" in line:
-        return "OUTBOUND"
-    if "POST /login" in line:
+def extract_direction(source: str) -> str:
+    if source in ("/login", "/auth"):
         return "INBOUND"
+    if source == "/profile":
+        return "OUTBOUND"
     return "UNKNOWN"
+

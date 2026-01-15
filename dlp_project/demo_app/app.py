@@ -28,8 +28,11 @@ def login():
 def profile():
     user = {
         "email": "test.user@example.com",
+        "phone": "+40722123456",
         "cnp": "1960101223344",
-        "iban": "RO49AAAA1B31007593840000"
+        "iban": "RO49AAAA1B31007593840000",
+       # "card": "4111111111111111",
+       # "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.signature"
     }
 
     allowed, finding, new_payload = check_dlp(user, "/profile")
@@ -42,6 +45,16 @@ def profile():
 
     return jsonify(user)
 
+@app.route("/auth", methods=["POST"])
+def auth():
+    data = request.json
+
+    allowed, finding, new_payload = check_dlp(data, "/auth")
+
+    if not allowed:
+        abort(403, description=f"DLP BLOCKED: {finding.dtype}")
+
+    return jsonify({"status": "authenticated"})
 
 @app.route("/metrics", methods=["GET"])
 def metrics():

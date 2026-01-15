@@ -7,7 +7,7 @@ _LAST_MTIME = 0
 
 POLICY_FILE = os.path.join(
     os.path.dirname(__file__),
-    "policy.yaml"
+    "policies.yaml"
 )
 
 def load_policy():

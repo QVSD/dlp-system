@@ -14,10 +14,18 @@ import json
 
 
 def check_dlp(payload: dict, endpoint: str):
+    print("\n=== DLP CHECK START ===")
+    print("Endpoint raw:", endpoint)
+    print("Payload:", payload)
+
     serialized = json.dumps(payload)
 
     context = extract_context(endpoint)
-    direction = "OUTBOUND"
+    direction = extract_direction(endpoint)
+
+    print("Extracted context:", context)
+    print("Extracted direction:", direction)
+
     modified_payload = payload.copy()
 
     for dtype, pattern in RULES.items():
@@ -35,8 +43,22 @@ def check_dlp(payload: dict, endpoint: str):
                 context=context,
                 direction=direction
             )
+            print("\n--- Finding candidate ---")
+            print("Type:", dtype)
+            print("Value:", value)
+            print("Severity:", SEVERITY.get(dtype))
+            print("Confidence:", confidence)
+            print("Context:", context)
+            print("Direction:", direction)
+
 
             finding.action = evaluate_policy(finding)
+            finding.action = evaluate_policy(finding)
+
+            print("=> Policy decision:")
+            print("   Action:", finding.action)
+            print("   Matched policy:", getattr(finding, "policy", "N/A"))
+
 
             inc("dlp_events_total")
             inc("dlp_events_by_type", {"type": finding.dtype})
@@ -61,4 +83,5 @@ def check_dlp(payload: dict, endpoint: str):
                         
             if finding.action == "ALERT":
                 inc("dlp_alerts_total")
+                write_audit(finding, endpoint, MODE)
     return True, None, modified_payload
