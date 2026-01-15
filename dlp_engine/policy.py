@@ -26,45 +26,30 @@ MODE = CONFIG.get("mode", "MONITOR")
 
 
 def evaluate_policy(finding):
-    global POLICIES, MODE
-    CONFIG = load_config()
-    MODE = CONFIG.get("mode", MODE)
-    POLICIES = sorted(
-        CONFIG["policies"],
-        key=lambda p: p.get("priority", 0),
-        reverse=True
-    )
-    print("\n[POLICY EVAL]")
-    print("Finding:")
-    print(
-        f"  dtype={finding.dtype}, "
-        f"severity={finding.severity}, "
-        f"context={finding.context}, "
-        f"direction={finding.direction}, "
-        f"confidence={finding.confidence}"
-    )
+    finding.mode_used = MODE
 
     for policy in POLICIES:
-        print("\nChecking policy:", policy.get("name"))
-        print("Conditions:", policy.get("when", {}))
         if not _matches_conditions(finding, policy.get("when", {})):
-            print(" [ X ] Conditions NOT matched")
             continue
 
-        action = policy["action"]
-        print(" [ V ] Conditions matched")
-        print("Action:", policy["action"])
+        finding.policy = policy.get("name", "UNKNOWN_POLICY")
 
-        finding.policy = policy["name"]
+        original_action = policy["action"]
+        finding.original_action = original_action
 
-        if MODE == "MONITOR" and action in ("BLOCK", "MASK"):
+        # MONITOR downgrade
+        if MODE == "MONITOR" and original_action in ("BLOCK", "MASK"):
+            print(f"MODE=MONITOR → downgraded {original_action} to ALERT (policy={finding.policy})")
+            finding.reason = f"Policy would {original_action} in ENFORCE mode"
             return "ALERT"
 
-        return action
+        finding.reason = "Policy enforced"
+        return original_action
 
     finding.policy = "DEFAULT"
+    finding.original_action = "IGNORE"
+    finding.reason = "No policy matched"
     return "IGNORE"
-
 
 
 

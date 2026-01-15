@@ -1,6 +1,6 @@
 from dlp_engine.rules import RULES, SEVERITY
 from dlp_engine.scoring import compute_confidence
-from dlp_engine.policy import evaluate_policy, MODE
+from dlp_engine.policy import evaluate_policy
 from dlp_engine.masking import mask_value
 from dlp_engine.context import extract_context, extract_direction
 from dlp_engine.models import Finding
@@ -68,7 +68,7 @@ def check_dlp(payload: dict, endpoint: str):
                 send_alert(finding, endpoint=endpoint)
 
             if finding.action != "IGNORE":
-                write_audit(finding, endpoint=endpoint, mode=MODE)
+                write_audit(finding, endpoint=endpoint)
 
             if finding.action == "BLOCK":
                 inc("dlp_blocks_total")
@@ -83,5 +83,5 @@ def check_dlp(payload: dict, endpoint: str):
                         
             if finding.action == "ALERT":
                 inc("dlp_alerts_total")
-                write_audit(finding, endpoint, MODE)
+                write_audit(finding, endpoint=endpoint)
     return True, None, modified_payload

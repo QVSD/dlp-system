@@ -7,7 +7,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 AUDIT_FILE = os.path.join(BASE_DIR, "dlp_audit.log")
 
 
-def write_audit(finding, endpoint=None, mode="ENFORCE"):
+def write_audit(finding, endpoint: str, request_id: str = None):
     event = {
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "event_type": f"DLP_{finding.action}",
@@ -15,13 +15,15 @@ def write_audit(finding, endpoint=None, mode="ENFORCE"):
         "severity": finding.severity,
         "confidence": finding.confidence,
         "action": finding.action,
+        "original_action": getattr(finding, "original_action", None),
+        "policy": getattr(finding, "policy", None),
         "direction": finding.direction,
         "context": finding.context,
         "endpoint": endpoint,
         "masked_value": finding.masked_value,
-        "mode": mode,
-        "reason": build_reason(finding),
-        "request_id": str(uuid.uuid4())
+        "mode": getattr(finding, "mode_used", "UNKNOWN"),
+        "reason": getattr(finding, "reason", ""),
+        "request_id": str(uuid.uuid4()),
     }
 
     with open(AUDIT_FILE, "a", encoding="utf-8") as f:
