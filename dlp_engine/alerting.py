@@ -7,6 +7,12 @@ def send_alert(finding, endpoint=None):
     send, suppressed = should_send_alert(finding, endpoint)
 
     if not send:
+        print(
+            f"[RATE-LIMIT] Alert SUPPRESSED | "
+            f"Type={finding.dtype} | "
+            f"Action={finding.action} | "
+            f"Endpoint={endpoint}"
+        )
         return
 
     msg = (
@@ -19,7 +25,7 @@ def send_alert(finding, endpoint=None):
     )
 
     if suppressed:
-        msg += f" | suppressed={suppressed}"
+        msg += f" | suppressed_duplicates={suppressed}"
 
     print(msg)
 

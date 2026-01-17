@@ -8,12 +8,12 @@ policies:
       direction: OUTBOUND
     action: BLOCK
 
-  - name: Block CNP in auth
+  - name: Allow CNP in auth
     priority: 90
     when:
       data_type: CNP
       context: AUTH
-    action: BLOCK
+    action: ALERT
 
   - name: Mask high outbound
     priority: 80

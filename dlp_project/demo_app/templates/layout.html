@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DLP Platform</title>
+</head>
+<body>
+
+<h1>Enterprise DLP Platform (PoC)</h1>
+
+<p>
+<b>Role:</b> {{ role }} |
+<b>Mode:</b> {{ mode }}
+</p>
+
+<hr>
+
+<nav>
+    <a href="/">Home</a>
+
+    {% if role == "USER" %}
+        | <a href="/app">Application</a>
+    {% endif %}
+
+    {% if rbac.can_read_audit %}
+        | <a href="/soc">SOC Dashboard</a>
+        | <a href="/audit">Audit Logs</a>
+        | <a href="/metrics">Metrics</a>
+    {% endif %}
+
+    {% if rbac.can_change_mode %}
+        | <a href="/admin">Admin Console</a>
+    {% endif %}
+</nav>
+
+<hr>
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

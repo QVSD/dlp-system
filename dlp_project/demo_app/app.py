@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, redirect, abort, jsonify
 import logging
 from flask import abort
 from .dlp_hook import check_dlp
@@ -11,11 +11,65 @@ from dlp_engine.policy import set_mode, MODE
 
 app = Flask(__name__)
 
+ROLE = os.getenv("DLP_ROLE", "DEFAULT")
+
 logging.basicConfig(
     filename="app.log",
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(message)s"
 )
+
+@app.route("/", methods=["GET"])
+def index():
+    role = os.getenv("DLP_ROLE", "DEFAULT")
+
+    if role == "DEFAULT":
+        return render_template("user_home.html")
+
+    if role == "SOC_ANALYST":
+        return redirect("/soc")
+
+    if role == "SECURITY_ADMIN":
+        return redirect("/admin")
+
+    return abort(403)
+
+
+@app.route("/profile/update", methods=["POST"])
+def update_profile():
+    payload = {
+        "email": request.form.get("email"),
+        "cnp": request.form.get("cnp"),
+        "iban": request.form.get("iban"),
+    }
+    payload = {k: v for k, v in payload.items() if v}
+
+    allowed, finding, new_payload = check_dlp(payload, "/profile")
+
+    if not allowed:
+        return render_template(
+            "user_home.html",
+            error=" Update blocked by security policy",
+            role="DEFAULT"
+        )
+
+    return render_template(
+        "user_home.html",
+        result=new_payload,
+        role="DEFAULT"
+    )
+
+
+def render_with_rbac(template, **kwargs):
+    rp = get_role_policy(ROLE)
+
+    return render_template(
+        template,
+        role=ROLE,
+        mode=MODE,
+        rbac=rp,
+        **kwargs
+    )
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -58,12 +112,12 @@ def auth():
 
 @app.route("/metrics", methods=["GET"])
 def metrics():
-    return jsonify(get_metrics())
+    metrics = get_metrics()
+    return render_with_rbac("metrics.html", metrics=metrics)
 
 @app.route("/audit", methods=["GET"])
 def audit():
-    role = os.getenv("DLP_ROLE", "DEFAULT")
-    rp = get_role_policy(role)
+    rp = get_role_policy(ROLE)
 
     if not rp.can_read_audit:
         abort(403, description="RBAC: not allowed to read audit logs")
@@ -75,7 +129,8 @@ def audit():
         for e in events:
             e.pop("masked_value", None)
 
-    return jsonify({"role": role, "events": events})
+    
+    return render_with_rbac("audit.html", events=events)
 
 @app.route("/admin/mode", methods=["POST"])
 def set_dlp_mode():
@@ -93,6 +148,34 @@ def set_dlp_mode():
 
     set_mode(new_mode)
     return jsonify({"status": "ok", "mode": MODE})
+
+@app.route("/admin", methods=["GET", "POST"])
+def admin():
+    rp = get_role_policy(ROLE)
+    if not rp.can_change_mode:
+        abort(403)
+
+    if request.method == "POST":
+        set_mode(request.form["mode"])
+        return redirect("/")
+
+    events = tail_audit(20)
+    return render_with_rbac("admin.html", events=events)
+
+
+@app.route("/app")
+def user_app():
+    return render_with_rbac("app.html", role=ROLE, mode=MODE)
+
+
+@app.route("/soc")
+def soc():
+    rp = get_role_policy(ROLE)
+    if not rp.can_read_audit:
+        abort(403)
+
+    events = tail_audit(20)
+    return render_with_rbac("soc.html", events=events)
 
 
 if __name__ == "__main__":

@@ -35,15 +35,16 @@ def evaluate_policy(finding):
         finding.policy = policy.get("name", "UNKNOWN_POLICY")
 
         original_action = policy["action"]
-        finding.original_action = original_action
+        finding.policy = policy["name"]
 
-        # MONITOR downgrade
         if MODE == "MONITOR" and original_action in ("BLOCK", "MASK"):
             print(f"MODE=MONITOR → downgraded {original_action} to ALERT (policy={finding.policy})")
             finding.reason = f"Policy would {original_action} in ENFORCE mode"
-            return "ALERT"
+            finding.action = "ALERT"
+            return finding
 
-        finding.reason = "Policy enforced"
+        finding.decision_reason = f"Policy enforced: {policy['name']}"
+
         return original_action
 
     finding.policy = "DEFAULT"

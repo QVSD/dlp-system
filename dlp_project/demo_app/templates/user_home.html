@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>My Profile</h2>
+
+<p>Update your personal information.</p>
+
+<form method="post" action="/profile/update">
+    <label>Email:</label><br>
+    <input type="text" name="email"><br><br>
+
+    <label>CNP:</label><br>
+    <input type="text" name="cnp"><br><br>
+
+    <label>IBAN:</label><br>
+    <input type="text" name="iban"><br><br>
+
+    <button type="submit">Save profile</button>
+</form>
+
+{% if error %}
+<p style="color:red">{{ error }}</p>
+{% endif %}
+
+{% if result %}
+<p style="color:green">Profile updated successfully.</p>
+<pre>{{ result }}</pre>
+{% endif %}
+{% endblock %}

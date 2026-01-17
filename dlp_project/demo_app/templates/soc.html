@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>SOC Dashboard</h2>
+
+<p>Recent DLP events:</p>
+
+<table border="1">
+<tr>
+    <th>Time</th>
+    <th>Type</th>
+    <th>Severity</th>
+    <th>Action</th>
+    <th>Context</th>
+</tr>
+
+{% for e in events %}
+<tr>
+    <td>{{ e.timestamp }}</td>
+    <td>{{ e.data_type }}</td>
+    <td>{{ e.severity }}</td>
+    <td>{{ e.action }}</td>
+    <td>{{ e.context }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

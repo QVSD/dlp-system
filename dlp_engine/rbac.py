@@ -98,3 +98,39 @@ def redact_finding_for_role(finding, role: str) -> dict:
         data["masked_value"] = finding.masked_value
 
     return data
+
+def redact_audit_event_for_role(event: dict, role: str) -> dict:
+    rp = get_role_policy(role)
+
+    if not rp.can_read_audit:
+        return {}
+
+    # FILTER
+    if event.get("severity") not in rp.allowed_severities:
+        return {}
+
+    if event.get("action") not in rp.allowed_actions:
+        return {}
+
+    base = {
+        "timestamp": event["timestamp"],
+        "event_type": event["event_type"],
+        "data_type": event["data_type"],
+        "severity": event["severity"],
+        "action": event["action"],
+        "context": event["context"],
+        "direction": event["direction"],
+        "endpoint": event["endpoint"],
+        "confidence": event["confidence"],
+    }
+
+    if rp.see_masked_value:
+        base["masked_value"] = event.get("masked_value")
+
+    # ADMIN EXTRA VISIBILITY
+    if role == "SECURITY_ADMIN":
+        base["mode"] = event.get("mode")
+        base["policy"] = event.get("policy")
+        base["decision_reason"] = event.get("decision_reason")
+
+    return base

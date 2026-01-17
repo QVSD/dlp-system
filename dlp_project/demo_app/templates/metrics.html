@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DLP Metrics</title>
+</head>
+<body>
+
+<h2>DLP Metrics</h2>
+
+<ul>
+{% for k, v in metrics.items() %}
+    <li><b>{{ k }}</b>: {{ v }}</li>
+{% endfor %}
+</ul>
+
+<br>
+<a href="/">Back</a>
+
+</body>
+</html>

@@ -16,14 +16,15 @@ def write_audit(finding, endpoint: str, request_id: str = None):
         "confidence": finding.confidence,
         "action": finding.action,
         "original_action": getattr(finding, "original_action", None),
-        "policy": getattr(finding, "policy", None),
         "direction": finding.direction,
         "context": finding.context,
         "endpoint": endpoint,
         "masked_value": finding.masked_value,
         "mode": getattr(finding, "mode_used", "UNKNOWN"),
-        "reason": getattr(finding, "reason", ""),
         "request_id": str(uuid.uuid4()),
+
+        "policy": getattr(finding, "policy", None),
+        "decision_reason": getattr(finding, "decision_reason", None),
     }
 
     with open(AUDIT_FILE, "a", encoding="utf-8") as f:

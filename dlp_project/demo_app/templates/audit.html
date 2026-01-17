@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DLP Audit</title>
+</head>
+<body>
+
+<h2>Audit Log (Role: {{ role }})</h2>
+
+<table border="1">
+<tr>
+    <th>Time</th>
+    <th>Type</th>
+    <th>Action</th>
+    <th>Context</th>
+    <th>Endpoint</th>
+</tr>
+
+{% for e in events %}
+<tr>
+    <td>{{ e.timestamp }}</td>
+    <td>{{ e.data_type }}</td>
+    <td>{{ e.action }}</td>
+    <td>{{ e.context }}</td>
+    <td>{{ e.endpoint }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<br>
+<a href="/">Back</a>
+
+</body>
+</html>

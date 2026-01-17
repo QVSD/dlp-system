@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Security Administration</h2>
+
+<p>Current DLP mode: <strong>{{ mode }}</strong></p>
+
+<form method="post">
+    <select name="mode">
+        <option value="MONITOR">MONITOR</option>
+        <option value="ENFORCE">ENFORCE</option>
+    </select>
+    <button type="submit">Change mode</button>
+</form>
+
+<h3>Recent decisions</h3>
+
+<table border="1">
+<tr>
+    <th>Time</th>
+    <th>Policy</th>
+    <th>Action</th>
+    <th>Reason</th>
+</tr>
+
+{% for e in events %}
+<tr>
+    <td>{{ e.timestamp }}</td>
+    <td>{{ e.policy }}</td>
+    <td>{{ e.action }}</td>
+    <td>{{ e.decision_reason }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
