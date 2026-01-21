@@ -14,16 +14,19 @@ def write_audit(finding, endpoint: str, request_id: str = None):
         "data_type": finding.dtype,
         "severity": finding.severity,
         "confidence": finding.confidence,
-        "action": finding.action,
+
+        "action": finding.action.name if hasattr(finding.action, "name") else str(finding.action),
         "original_action": getattr(finding, "original_action", None),
+
         "direction": finding.direction,
         "context": finding.context,
         "endpoint": endpoint,
+
         "masked_value": finding.masked_value,
         "mode": getattr(finding, "mode_used", "UNKNOWN"),
-        "request_id": str(uuid.uuid4()),
+        "request_id": request_id or str(uuid.uuid4()),
 
-        "policy": getattr(finding, "policy", None),
+        "policy": finding.policy.name if hasattr(finding.policy, "name") else str(finding.policy),
         "decision_reason": getattr(finding, "decision_reason", None),
     }
 

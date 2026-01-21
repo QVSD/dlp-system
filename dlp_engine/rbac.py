@@ -89,7 +89,7 @@ def redact_finding_for_role(finding, role: str) -> dict:
         "context": finding.context,
     }
 
-    # Not recommended to show raw_value to admins in a demo
+    # Not recommended to show raw_value to admins
 
     if rp.see_raw_value:
         data["value"] = finding.value

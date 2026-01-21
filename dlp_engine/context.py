@@ -30,9 +30,11 @@ def context_score(dtype: str, line: str) -> int:
     return score  # max ~50
 
 def extract_direction(source: str) -> str:
-    if source in ("/login", "/auth"):
+    if source.startswith("/login") or source.startswith("/auth"):
         return "INBOUND"
-    if source == "/profile":
+
+    if source.startswith("/profile"):
         return "OUTBOUND"
+
     return "UNKNOWN"
 

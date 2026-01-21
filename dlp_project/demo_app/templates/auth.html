@@ -1,0 +1,26 @@
+<h2>Login</h2>
+
+<input id="cnp" placeholder="CNP" />
+<button onclick="login()">Login</button>
+
+<p id="error" style="color:red;"></p>
+
+<script>
+async function login() {
+  const cnp = document.getElementById("cnp").value;
+
+  const res = await fetch("/auth", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cnp })
+  });
+
+  if (res.ok) {
+    // SUCCESS → go to profile
+    window.location.href = "/profile/view";
+  } else {
+    document.getElementById("error").innerText =
+      " Authentication blocked by security policy";
+  }
+}
+</script>

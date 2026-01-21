@@ -34,32 +34,6 @@ def index():
 
     return abort(403)
 
-
-@app.route("/profile/update", methods=["POST"])
-def update_profile():
-    payload = {
-        "email": request.form.get("email"),
-        "cnp": request.form.get("cnp"),
-        "iban": request.form.get("iban"),
-    }
-    payload = {k: v for k, v in payload.items() if v}
-
-    allowed, finding, new_payload = check_dlp(payload, "/profile")
-
-    if not allowed:
-        return render_template(
-            "user_home.html",
-            error=" Update blocked by security policy",
-            role="DEFAULT"
-        )
-
-    return render_template(
-        "user_home.html",
-        result=new_payload,
-        role="DEFAULT"
-    )
-
-
 def render_with_rbac(template, **kwargs):
     rp = get_role_policy(ROLE)
 
@@ -78,26 +52,31 @@ def login():
     logging.info(f"endpoint=/login payload={data}")
     return jsonify({"status": "ok"})
 
-@app.route("/profile", methods=["GET"])
-def profile():
+@app.route("/profile/view", methods=["GET"])
+def profile_view():
     user = {
         "email": "test.user@example.com",
         "phone": "+40722123456",
         "cnp": "1960101223344",
         "iban": "RO49AAAA1B31007593840000",
        # "card": "4111111111111111",
-       # "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.signature"
+       # "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     }
 
-    allowed, finding, new_payload = check_dlp(user, "/profile")
+    allowed, finding, data = check_dlp(user, "/profile/view")
 
     if not allowed:
-        abort(403, description=f"DLP BLOCKED: {finding.dtype}")
+        return render_template(
+            "profile_blocked.html",
+            reason=f"Sensitive data blocked: {finding.dtype}",
+            mode=MODE
+        )
 
-    if new_payload:
-        return jsonify(new_payload)
-
-    return jsonify(user)
+    return render_template(
+        "profile.html",
+        profile=data,
+        mode=MODE
+)
 
 @app.route("/auth", methods=["POST"])
 def auth():
@@ -109,6 +88,10 @@ def auth():
         abort(403, description=f"DLP BLOCKED: {finding.dtype}")
 
     return jsonify({"status": "authenticated"})
+
+@app.route("/auth-ui")
+def auth_ui():
+    return render_template("auth.html")
 
 @app.route("/metrics", methods=["GET"])
 def metrics():

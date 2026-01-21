@@ -53,7 +53,6 @@ def check_dlp(payload: dict, endpoint: str):
 
 
             finding.action = evaluate_policy(finding)
-            finding.action = evaluate_policy(finding)
 
             print("=> Policy decision:")
             print("   Action:", finding.action)
@@ -61,27 +60,56 @@ def check_dlp(payload: dict, endpoint: str):
 
 
             inc("dlp_events_total")
-            inc("dlp_events_by_type", {"type": finding.dtype})
-            inc("dlp_events_by_action", {"action": finding.action})
 
-            if finding.action in ("ALERT", "MASK", "BLOCK"):
-                send_alert(finding, endpoint=endpoint)
+            inc("dlp_events_by_type", {
+                "type": finding.dtype
+            })
+
+            inc("dlp_events_by_action", {
+                "action": finding.action
+            })
+
+            inc("dlp_events_by_severity", {
+                "severity": finding.severity
+            })
+
+            inc("dlp_events_by_context", {
+                "context": finding.context
+            })
+
+
+            if finding.action == "ALERT":
+                inc("dlp_alerts_total")
+
+            if finding.action == "MASK":
+                inc("dlp_masks_total")
+
+            if finding.action == "BLOCK":
+                inc("dlp_blocks_total")
 
             if finding.action != "IGNORE":
                 write_audit(finding, endpoint=endpoint)
 
+            if finding.action in ("ALERT", "MASK", "BLOCK"):
+                send_alert(finding, endpoint=endpoint)
+
             if finding.action == "BLOCK":
-                inc("dlp_blocks_total")
                 quarantine(payload)
                 return False, finding, None
 
             if finding.action == "MASK":
-                inc("dlp_masks_total")
-                for k, v in modified_payload.items():
-                    if v == value:
-                        modified_payload[k] = finding.masked_value
-                        
-            if finding.action == "ALERT":
-                inc("dlp_alerts_total")
-                write_audit(finding, endpoint=endpoint)
-    return True, None, modified_payload
+                modified_payload = apply_mask(modified_payload, finding)
+
+    final_payload = modified_payload if modified_payload != payload else payload
+    return True, None, final_payload
+
+
+def apply_mask(payload: dict, finding):
+    payload = payload.copy()
+    for k, v in payload.items():
+        if isinstance(v, str) and finding.value in v:
+            payload[k] = payload[k].replace(
+                finding.value,
+                finding.masked_value
+            )
+    return payload

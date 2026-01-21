@@ -1,0 +1,22 @@
+<h2>User profile</h2>
+
+<ul>
+  <li>Email: {{ profile.email }}</li>
+  <li>CNP: {{ profile.cnp }}</li>
+  <li>IBAN: {{ profile.iban }}</li>
+  <li>Phone: {{ profile.phone }}</li>
+
+  {% if profile.card %}
+    <li>Card: {{ profile.card }}</li>
+  {% endif %}
+
+  {% if profile.jwt %}
+    <li>Session token: {{ profile.jwt }}</li>
+  {% endif %}
+</ul>
+
+{% if mode == "MONITOR" %}
+<div class="warning">
+  Monitoring mode active. Sensitive data access is logged.
+</div>
+{% endif %}
